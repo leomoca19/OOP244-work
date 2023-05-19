@@ -1,0 +1,11 @@
+﻿/***********************************************************************
+Author: Leonardo Caceres
+Student number: 152877205
+Email: lde-la-mora-canceres@myseneca.ca
+Date of completion: 19-May-2023
+***********************************************************************/
+
+
+After completing this workshop I have practiced encapsulation by creating a namespace through multiple files and all of my code was on only accessible through the use of my namespace, I also implemented modularity and respected the one definition rule by organizing my code in modules and including safeguards to prevent multiple compilations of code.
+The most difficult part was working with resource files that visual studio had trouble opening. I could solve this by placing all of the used files under the same folder. I learned through this challenge about the difference between a compiler and a linker problem.
+This workshop helped me understand the issue that represents “hidden code”, placing several include statements in a source file hides the requirements of a module to clients of the module. By only including the header of a source file, I am able to make the required libraries of the module and keep a cleaner source file, which reduces the brain bloat required when working on it.
