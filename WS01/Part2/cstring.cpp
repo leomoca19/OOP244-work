@@ -2,7 +2,7 @@
 Author: Leonardo Caceres
 Student number: 152877205
 Email: lde-la-mora-canceres@myseneca.ca
-Date of completion: 19-May-2023
+Date of completion: 25-May-2023
 
 I have done all the coding by myself and only copied the code
 that my professor provided to complete my workshops and assignments.
@@ -10,23 +10,31 @@ that my professor provided to complete my workshops and assignments.
 #include "cstring.h"
 
 namespace sdds{
+	//This is a more powerful solution than my previous one
+	//By passing strLen(src) + 1 instead of strLen(src), the call of 
+	// strnCpy will now work as expected copying the whole content of
+	// source includying '\0'
 	void strCpy(char* des, const char* src) {
-		for (int i = 0; i < 80; i++)
-			des[i] = '\0';
-		strnCpy(des, src, strLen(src));
-	}
+		strnCpy(des, src, strLen(src) + 1); }
+	//Neither of these functions have to deal with the destination 
+	// sources being populated with garbage values since the '\0' will 
+	// be placed properly, all just by adding + 1 to strLen(src) when 
+	// passed as the 3rd argument
+	//Using *des and *src instead of the classic src[i] reduces the 
+	// amount of keystrokes required to write the function, using the ++
+	// operators keeps track of the next index to be used and reduces the
+	// brain bloat, and the ++ operations are stacked in the same line 
+	// for simplicity
 	void strnCpy(char* des, const char* src, int len) {
 		int i = 0;
-
-		if(des[0] == -52)
-			for (i = 0; i < 80 + 1; i++) des[i] = '\0';
-		
-		for (i = 0; i < len && src[i] != '\0'; i++)
-			des[i] = src[i];
-
-		if (i < len)
-			des[i] = '\0';
+		while (i < len) {
+			*des = *src;
+			++des; ++src; i++;
+		}
+		if(i < len)
+			*des = '\0';
 	}
+	///////////////////////////////////////////////////////////////////
 	int strCmp(const char* s1, const char* s2) {
 		return strnCmp(s1, s2, strLen(s1));
 	}
