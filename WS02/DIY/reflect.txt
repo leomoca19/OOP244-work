@@ -1,0 +1,32 @@
+/***********************************************************************
+Author: Leonardo Caceres
+Student number: 152877205
+Email: lde-la-mora-canceres@myseneca.ca
+Date of completion: 29-May-2023
+***********************************************************************/
+
+Using dynamic memory allows my program to save system memory during 
+execution, but it is only really usefull when poperties may vary in 
+size, if the input of the file is known and constant like in this case,
+it makes sense to create postalCode as a character array of 4 elements 
+because it will always have exactly 4 elements. This is not the case 
+for the array of Population type, because it's sizew will change 
+depending on the amount of records of in the input file.
+
+Overloading functions is very useful when making functions that won't 
+use the same parameters but that will perform similar tasks, like in 
+my function "load".
+
+In parameters are parameters that will be used only to provide 
+information to the function and won't be altered during the execution
+of the function, an example of this is my function:
+bool load(const char*);
+This function receives a string literal that can't be altered since it
+is constant, constant parameters are clear examples of input parameters.
+In the opposite side, out parameters are ment to be altered, this 
+parameters are passed by address and the variable bool read(char*) is an
+example of this, function will change the value stores in the chaacter 
+pointer argument using the address of said argument, there is no need
+for this functiont to return its value since it can change it directly,
+thus allowing the function to return whether the reading was succesfull
+or not.

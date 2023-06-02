@@ -1,12 +1,13 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include <cstdio>
 #include "File.h"
-
 namespace sdds {
    FILE* fptr;
    bool openFile(const char filename[]) {
       fptr = fopen(filename, "r");
       return fptr != NULL;
+   }
+   void closeFile() {
+      if (fptr) fclose(fptr);
    }
    int noOfRecords() {
       int noOfRecs = 0;
@@ -17,8 +18,13 @@ namespace sdds {
       rewind(fptr);
       return noOfRecs;
    }
-   void closeFile() {
-      if (fptr) fclose(fptr);
-   }
 
+   bool read(char* pCode) {
+       int i = 0;
+       while (i += fscanf(fptr, "%c", &pCode[i]));
+       return i == 3;
+   }
+   bool read(int* popNum) {
+       return fscanf(fptr, "%d\n", popNum) == 1;
+   }
 }
