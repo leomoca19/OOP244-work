@@ -1,0 +1,17 @@
+/***********************************************************************
+Author: Leonardo Caceres
+Student number: 152877205
+Email: lde-la-mora-canceres@myseneca.ca
+Date of completion: 06-June-2023
+
+I have done all the coding by myself and only copied the code
+that my professor provided to complete my workshops and assignments.
+***********************************************************************/
+
+Throughout this workshop I  gain a deeper understanding of how to define a class type, by encapsulating related data and functions into a single entity, a class type is an effective way to organize and structure both my code and module for client code.
+
+I alse explored the significance of privatizing data within the class type. Privecy ensures data integrity and promotes encapsulation. By making some of the porperties and methods, I could control how the data is manipulated and prevent unintended modifications by clients, enhancing the reliability of the program.
+
+I experienced how objects serve as concrete instances of a class. by creating methods to interact with the object's porperties I created a sort of an interface. This interface offer controlled access to the data, allowing data manipulation and retrieval while maintaining the privacy and thus the security of the object.
+
+I utilized standard library functions and methods of the cout object to format data inserted into the output stream. This allowed me to present the information in a structured and visually concrete and customizable.
