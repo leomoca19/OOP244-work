@@ -1,0 +1,18 @@
+/***********************************************************************
+Author: Leonardo Caceres
+Student number: 152877205
+Email: lde-la-mora-canceres@myseneca.ca
+Date of completion: 18-June-2023
+***********************************************************************/
+
+In the my solution,I utilized a number of important object oriented concept: binary member operators, type conversion operators, unary member operators, helper binary operators between classes, and helper operators between a primitive type and a class.
+
+The addition operator is allowed me to add values to a Mark. It updates the grade of the Mark by adding the argument. This improves code readability and is a convenient way to modify the object's state.
+
+The int, char, bool and double type conversion operators enable implicit casting of a Mark to different types. These operators enhance code flexibility and readability by allowing the use of Mark objects in operations, simplifying the Mark into only one of its properties and handles the desired interpretation.
+
+The assignment operator allows the assignment of an integer value to the Mark object's grade. This operator ensures proper validation of the assigned value.
+
+The helper addition operator was also a implemented enabling the addition of a Mark object to an integer value outside the Mark class. This operator improves code modularity and allows the client to use the Mark in another way, thus improving its flexibility.
+
+The insertion operator was implementes as helper operator aswell, it enables the insertion of a Mark's grade into an output stream, simplifying insertion of Mark objects, this should be very powerfull since the object could be used to output to a file instead of the screen.
