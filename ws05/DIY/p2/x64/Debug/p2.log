@@ -1,0 +1,5 @@
+﻿  Mark.cpp
+G:\My Drive\cloud-Seneca\cloud-OOP244\OOP-work\WS05\DIY\Mark.cpp(27,13): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+G:\My Drive\cloud-Seneca\cloud-OOP244\OOP-work\WS05\DIY\Mark.cpp(66,10): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+G:\My Drive\cloud-Seneca\cloud-OOP244\OOP-work\WS05\DIY\Mark.cpp(80,10): warning C4244: 'return': conversion from 'size_t' to 'double', possible loss of data
+  p2.vcxproj -> G:\My Drive\cloud-Seneca\cloud-OOP244\OOP-work\WS05\DIY\p2\x64\Debug\p2.exe

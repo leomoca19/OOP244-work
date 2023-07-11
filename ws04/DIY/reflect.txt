@@ -1,0 +1,17 @@
+/***********************************************************************
+Author: Leonardo Caceres
+Student number: 152877205
+Email: lde-la-mora-canceres@myseneca.ca
+Date of completion: 10-June-2023
+
+I have done all the coding by myself and only copied the code
+that my professor provided to complete my workshops and assignments.
+***********************************************************************/
+
+Default constructor allows for the initialization of member variables to default values. However, I find that most times is more usefull to initialize member variables at cration time, that way I make sure that the object's properties won't hold garbage values when the execution gets to a method, includying constructors.
+
+I explored the custom constructors oveloading. Custom constructors can make the code much simpler to work with but I still find a limitation with them, and it is that they are called automatically and neither the cllient code or the source code have much versatility when calling them, that is why I decided to make my most complex constructors only call another functions tha that will manage the properties so I have only one process that will change the object state, reducing then the probability of unexpected behaviour and logic mistakes.
+
+Destructor where quite usefull on the matter of preventing memory leaks. The destructor is responsible for cleaning up resources, and by having processes that are dedicate to prevent memory leaks instead of just guess when one might ocurr like in previous workshops, the readability of the code is enchanced and the comlexity is reduced.
+
+Referencing of the current object, by utilizing the this pointer, provides flexibility to return it and managing the current object so that the it can be, for example, reassigned and compared with other obejcts in a single method.

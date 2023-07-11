@@ -1,0 +1,610 @@
+with the instructions given in readme.md, create a file called TextFile.cpp that will produce the correct output, only modify the file TextFile.cpp
+
+readme.md
+Your task for this part of the workshop is to complete the implementation of the **TextFile** module. This module attaches itself to a text file on the hard drive and loads the content of the text file into an array of **Line**s.
+
+This module is then capable of displaying the text file page by page on the screen or give the user program read-only access to the lines of the text file as an array of C-strings.
+
+A **Textfile** can be safely copied, and the copying will also result in the creation of a copy of the attached file on the hard drive.
+
+A **TextFile** can be safely assigned to another **TextFile**, and the assignment will also overwrite the contents of the target file on the hard drive with the content of the source file.
+
+Unlike all the other modules that you have created till now (containing the implementation of only one class), the **TextFile** module contains two classes; **Line** and **TextFile**.
+
+The **Line** class encapsulates a single line of a text file. The **TextFile** encapsulates a text file on the hard drive and it is a dynamic array of **Lines**. This means an instance of **Line** class should not be able to exist outside of a **TextFile** class.
+
+To enforce this, make the **Line** class fully private and make the **TextFile** class a friend of the **Line** class. Doing so, only within the scope of the **TextFile** class, a **Line** can be instantiated and accessed:
+
+```C++
+class TextFile; // forward declaration
+class Line{  // fully private, no public member
+    ........
+    friend class TextFile;
+};
+class TextFile{
+    public:
+    .......
+};
+```
+
+## The Line Class
+The **Line** class is fully private and should only be accessible by the **TextFile** class.
+```C++
+   class Line {
+      char* m_value;
+      Line();
+      ~Line();
+      operator const char* ()const;
+      Line& operator=(const char* lineContent);
+      // incomplete...
+
+   };
+```
+### Attributes (Member variables)
+#### char* m_value
+holds the address of the dynamically allocated Cstring (to hold a line of the text file)
+### Methods (Member functions)
+#### operator const char* ()const;
+Returns the address held in the **m_value** attribute.
+#### Operator=(const char*) overload
+Dynamically allocates memory in **m_value** and copies the Cstring pointed by **lineContent** into it.
+### default constructor 
+Initializes the **m_value** attribute to **nullptr**.
+### destructor
+Makes sure all the allocated memory is freed. 
+
+> Make sure **Line** can not be copied or assigned to another **Line**.
+
+## The TextFile Class
+```C++
+class TextFile {
+      Line* m_textLines;
+      char* m_filename;
+      unsigned m_noOfLines;
+      unsigned m_pageSize;
+      void setFilename(const char* fname, bool isCopy = false);
+      void setNoOfLines();
+      void loadText();
+      void saveAs(const char *fileName)const;
+      void setEmpty();
+   public:
+      TextFile(unsigned pageSize = 15);
+      TextFile(const char* filename, unsigned pageSize = 15);
+      TextFile(const TextFile&);
+      TextFile& operator=(const TextFile&);
+      ~TextFile();
+      std::ostream& view(std::ostream& ostr)const;
+      std::istream& getFile(std::istream& istr);
+      operator bool()const;
+      unsigned lines()const;
+      const char* name()const;
+      const char* operator[](unsigned index)const;
+   };
+```
+### Attributes (Member variables)
+**TextFile** has four private member variables:
+```C++
+Line* m_textLines;
+```
+A pointer to hold the dynamic array of **Lines**. This attribute should be initialized to **nullptr**
+```C++
+char* m_filename;
+```
+A pointer to hold the dynamic Cstring holding the name of the file. This attribute should be initialized to **nullptr**
+```C++
+unsigned m_noOfLines;
+```
+An unsigned integer to be set to the number of lines in the file.
+```C++
+unsigned m_pageSize;
+```
+The page size is the number of lines that should be displayed on the screen before the display is paused. After these lines are displayed, the user must hit enter for the next page to appear. 
+### Private Methods (Member functions)
+#### setEmpty
+```C++
+void setEmpty();
+```
+deletes the **m_textLines** dynamic array and sets is to **nullptr**
+deletes the **m_filename** dynamic Cstring and sets is to **nullptr**
+sets **m_noOfLines** attribute to **zero**.
+#### setFilename
+```C++
+void setFilename(const char* fname, bool isCopy = false);
+```
+If the isCopy argument is false, dynamically allocates a Cstring in **m_filename** and copies the content of the **fname** argument into it.
+If the isCopy argument is true, dynamically allocates a Cstring in **m_filename** and copies the content of the **fname** argument with a prefix of **"C_"** attached to it.
+```C++
+Example:
+setFilename("abc.txt"); // sets the m_filename to "abc.txt"
+setFilename("abc.txt", true); // sets the m_filename to "C_abc.txt"
+```
+#### setNoOfLines
+```C++
+void setNoOfLines();
+```
+Counts the number of lines in the file:
+
+Creates a local **ifstream** object to open the file with the name held in **m_filename**. Then it will read the file, character by character, and accumulates the number of newlines in the **m_noOfLines** attribute. 
+
+In the end, it will increase **m_noOfLines** by one, just in case, the last line does not have a new line at the end.
+
+If the number of lines is zero, it will delete the m_filename and set it to nullptr. (Setting the TextFile to a safe empty state)
+
+#### loadText
+```C++
+void loadText();
+```
+Loads the text file **m_filename** into the dynamic array of Lines pointed by **m_textLines** :<br />
+If the **m_filename** is null, this function does nothing.
+
+If the **m_filename** is not null (**TextFile** is not in a safe empty state ), **loadText()** will dynamically allocate an array of Lines pointed by **m_textLines** with the size kept in m_noOfLines. 
+> *Make sure **m_textLine** is deleted before this to prevent memory leak*. 
+
+Create a local instance of **ifstream** using the file name **m_filename** to read the lines of the text file.
+
+Since the length of each line is unknown, read the line using a local C++ string object and the **getline** **helper** function. (note: this is the **HELPER** **getline** function and not a method of istream).
+
+In a loop reads each line into the string object and then sets the **m_textLines** array elements to the values returned by the **c_str()** method of the string object until the reading fails (end of file reached). 
+
+After all the lines are read, make sure to update the value of m_noOfline to the actual number of lines read (This covers the possibility of one extra empty line at the end of the file)
+
+#### saveAs
+```C++
+void saveAs(const char *fileName)const;
+```
+Saves the content of the TextFile under a new name. 
+
+Use a local ofstream object to open a new file using the name kept in the argument filename. Then loop through the elements of the m_textLines array and write them in the opened file adding a new line to the end of each line. 
+
+### Constructors
+```C++
+     TextFile(unsigned pageSize = 15);
+```
+Creates an empty TextFile and initializes the m_pageSize attribute using the pageSize argument.
+```C++
+     TextFile(const char* filename, unsigned pageSize = 15);
+```
+Initializes the m_pageSize attribute using the pageSize argument and all the other attributes to nullptr and zero. Then if the filename is not null, it will set the filename, set the number of Lines and load the Text (using the corresponding private methods.)
+### Rule of three implementations for classes with resource
+Implement The Copy Constructor, Copy assignment and destructor.
+#### Copy Constructor
+
+Initializes the m_pageSize attribute using the m_pageSize of the incoming TextFile object and all the other attributes to nullptr and zero.
+If the incoming Text object is in a valid State, performs the following tasks to copy the textfile and the content safely:
+
+- Sets the file-name to the name of the incoming TextFile object (isCopy set to true) [See setFilename()](#setfilename)
+- Saves the content of the incoming TextFile under the file name of the current TextFile
+- set the number of lines
+- loads the Text 
+
+#### Copy Assignment
+If the current and the incoming TextFiles are valid it will first delete the current text and then overwrites the current file and data by the content of the incoming TextFile.
+
+- deallocate the dynamic array of Text and sets the pointer to null
+- Saves the content of the incoming TextFile under the current filename
+- Sets the number of lines
+- loads the Text
+
+#### destructor
+Deletes all the dynamic data.
+### public Methods
+#### lines()
+```C++
+unsigned lines()const;
+```
+returns m_noOfLines;
+#### view()
+```C++
+std::ostream& view(std::ostream& ostr)const;
+```
+Prints the filename and then the content of the file "m_pageSize" lines at a time.
+
+- print the file name
+- underline the file name with '=' character
+- loops through the lines and print them one by line
+- pauses after printing "m_pageSize" lines and prompts the user ```Hit ENTER to continue...``` and waits for the user to press enter and repeats until all lines are printed.
+
+The function performs no action if the **TextFile** is in an empty state.
+
+This function receives and returns an instance of istream and uses the instance for printouts.
+
+#### getFile()
+```C++
+std::istream& getFile(std::istream& istr);
+```
+Receives a filename from istr to set the file name of the TextFile. Then sets the number of lines and loads the Text.
+When done it will return the istr;
+
+#### index Operator Overload
+```C++
+const char* operator[](unsigned index)const;
+```
+Returns the element in the m_textLine array corresponding to the index argument. If the TextFile is in an empty state, it will return null.
+If the index exceeds the size of the array it should loop back to the beginning.
+
+For example, if the number of lines is 10, the last index should be 9 and index 10 should return the first element and index 11 should return the second element. 
+
+### Type conversion overloads:
+#### boolean cast
+```C++
+operator bool()const;
+```
+Returns true if the TextFile is not in an empty state and returns false if it is.
+#### constant character pointer cast
+```C++
+const char* name()const;
+```
+Returns the filename.
+
+### Insertion and extraction helper operator overloads
+To print and read on and from istream and ostream overload operator<< and operator>>:
+#### operator<< 
+```C++
+   ostream& operator<<(ostream& ostr, const TextFile& text);
+```
+uses the view() method to print the TextFile
+#### operator>> 
+```C++
+   istream& operator>>(istream& istr, TextFile& text);
+```
+uses the getFile() method to get the file name from console and load the content from the file
+### Tester program
+```C++
+/***********************************************************************
+// Intro. to Object Oriented Programming
+// Workshop 6 
+// Version 1.0
+// Description
+// professor's tester program
+//
+// Revision History
+// -----------------------------------------------------------
+// Name            Date            Reason
+//
+/////////////////////////////////////////////////////////////////
+***********************************************************************/
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "TextFile.h"
+using namespace sdds;
+using namespace std;
+
+void FirstTen(TextFile T);
+void Copy(const string& dest, const string& source);
+void Dump(const string& filename);
+int main() {
+   TextFile Empty;
+   TextFile BadFilename("badFilename");
+   Copy("echoes.txt", "echoesOriginal.txt");
+   Copy("seamus.txt", "seamusOriginal.txt");
+   TextFile E;
+   TextFile S("seamus.txt");
+   cout << "Enter the text file name: ";
+   cin >> E;
+   cout << E << endl;
+   cout << S << endl;
+   FirstTen(E);
+   FirstTen(S);
+   E = S;
+   cout << E << endl;
+   cout << "============================================================" << endl;
+   Dump("echoes.txt");
+   Dump("seamus.txt");
+   Dump("C_echoes.txt");
+   Dump("C_seamus.txt");
+   cout << "*" << Empty << BadFilename << "*" << endl;
+   return 0;
+}
+void FirstTen(TextFile T) {
+   if (T) {
+      cout << ">>> First ten lines of : " << T.name() << endl;
+      for (unsigned i = 0; i < 10; i++) {
+         cout << (i + 1) << ": " << T[i] << endl;
+      }
+   }
+   else {
+      cout << "Nothing to print!" << endl;
+   }
+   cout << endl << "-------------------------------------------------------------" << endl;
+}
+void Dump(const string& filename) {
+   cout << "DUMP---------------------------------------------------------" << endl;
+   cout << ">>>" << filename << "<<<" << endl ;
+   ifstream fin(filename.c_str());
+   char ch;
+   while (fin.get(ch)) cout << ch;
+   cout << endl << "-------------------------------------------------------------" << endl;
+}
+void Copy(const string& dest, const string& source) {
+   ifstream fin(source.c_str());
+   ofstream fout(dest.c_str());
+   char ch;
+   while (fin.get(ch)) fout << ch;
+}
+```
+
+cstring.h
+#pragma once
+namespace sdds {
+    // Copies the srouce character string into the destination
+    void strCpy(char* des, const char* src);
+
+    // Copies the source character string into the destination upto "len"
+    // characters. The destination will be null terminated only if the number
+    // of the characters copied is less than "len"
+    void strnCpy(char* des, const char* src, int len);
+
+    // Compares two C-strings 
+    // returns 0 i thare the same
+    // return > 0 if s1 > s2
+    // return < 0 if s1 < s2
+    int strCmp(const char* s1, const char* s2);
+
+    // returns 0 i thare the same
+    // return > 0 if s1 > s2
+    // return < 0 if s1 < s2
+    int strnCmp(const char* s1, const char* s2, int len);
+
+    // returns the lenght of the C-string in characters
+    int strLen(const char* s);
+
+    // returns the address of first occurance of "str2" in "str1"
+    // returns nullptr if no match is found
+    const char* strStr(const char* str1, const char* str2);
+
+    // Concantinates "src" C-string to the end of "des"
+    void strCat(char* des, const char* src);
+
+}
+
+
+cstring.cpp
+#include "cstring.h"
+
+namespace sdds {
+	//This is a more powerful solution than my previous one
+	//By passing strLen(src) + 1 instead of strLen(src), the call of 
+	// strnCpy will now work as expected copying the whole content of
+	// source includying '\0'
+	void strCpy(char* des, const char* src) {
+		strnCpy(des, src, strLen(src) + 1);
+	}
+	//Neither of these functions have to deal with the destination 
+	// sources being populated with garbage values since the '\0' will 
+	// be placed properly, all just by adding + 1 to strLen(src) when 
+	// passed as the 3rd argument
+	//Using *des and *src instead of the classic src[i] reduces the 
+	// amount of keystrokes required to write the function, using the ++
+	// operators keeps track of the next index to be used and reduces the
+	// brain bloat, and the ++ operations are stacked in the same line 
+	// for simplicity
+	void strnCpy(char* des, const char* src, int len) {
+		int i = 0;
+		while (i < len) {
+			*des = *src;
+			++des; ++src; i++;
+		}
+		if (i < len)
+			*des = '\0';
+	}
+	///////////////////////////////////////////////////////////////////
+	int strCmp(const char* s1, const char* s2) {
+		return strnCmp(s1, s2, strLen(s1));
+	}
+	int strnCmp(const char* s1, const char* s2, int len) {
+		int check = 0, i = 0;
+
+		while (i < len && check == 0) {
+			if (s1[i] > s2[i])
+				check = 1;
+			else if (s1[i] < s2[i])
+				check = -1;
+			i++;
+		}
+
+		return check;
+	}
+	int strLen(const char* s) {
+		int i = 0;
+		while (s[i] != '\0') i++;
+		return i;
+	}
+	const char* strStr(const char* str1, const char* str2) {
+		int str1Sz = strLen(str1), str2Sz = strLen(str2), i = -1, check = 1;
+		const char* foundCharAddress = nullptr;
+
+		while (check != 0 && i < str1Sz) {
+			i++;
+			check = strnCmp(&str1[i], str2, str2Sz);
+		}
+
+		if (!check)
+			foundCharAddress = &str1[i];
+
+		return foundCharAddress;
+	}
+	void strCat(char* des, const char* src) {
+		int i = strLen(des), j = 0;
+		while (j < strLen(src)) {
+			des[i] = src[j];
+			i++; j++;
+		}
+	}
+}
+
+
+TextFile.cpp
+#include "TextFile.h"
+using namespace std;
+namespace sdds {
+   Line::operator const char* () const {
+      return (const char*)m_value;
+   }
+   Line& Line::operator=(const char* lineValue) {
+      delete[] m_value;
+      m_value = new char[strLen(lineValue) + 1];
+      strCpy(m_value, lineValue);
+      return *this;
+   }
+   Line::~Line() {
+      delete[] m_value;
+   }
+
+
+}
+
+correct output
+Enter the text file name: echoes.txt
+echoes.txt
+==========
+Overhead the albatross hangs motionless upon the air
+And deep beneath the rolling waves
+In labyrinths of coral caves
+The echo of a distant time
+Comes willowing across the sand
+And everything is green and submarine
+
+And no one showed us to the land
+And no one knows the wheres or whys
+But something stirs and something tries
+And starts to climb towards the light
+
+Strangers passing in the street
+By chance two separate glances meet
+And I am you and what I see is me
+Hit ENTER to continue...
+And do I take you by the hand?
+And lead you through the land?
+And help me understand the best I can?
+
+And no one calls us to move on
+And no one forces down our eyes
+And no one speaks and no one tries
+And no one flies around the sun
+
+Cloudless everyday you fall upon my waking eyes
+Inviting and inciting me to rise
+And through the window in the wall
+Come streaming in on sunlight wings
+A million bright ambassadors of morning
+
+Hit ENTER to continue...
+And no one sings me lullabies
+And no one makes me close my eyes
+And so I throw the windows wide
+And call to you across the sky
+
+seamus.txt
+==========
+I was in the kitchen
+Seamus, that's the dog, was outside
+Well, I was in the kitchen
+Seamus, my old hound, was outside
+Well, the sun sinks slowly
+But my old hound just sat right down and cried
+
+>>> First ten lines of : C_echoes.txt
+1: Overhead the albatross hangs motionless upon the air
+2: And deep beneath the rolling waves
+3: In labyrinths of coral caves
+4: The echo of a distant time
+5: Comes willowing across the sand
+6: And everything is green and submarine
+7:
+8: And no one showed us to the land
+9: And no one knows the wheres or whys
+10: But something stirs and something tries
+
+-------------------------------------------------------------
+>>> First ten lines of : C_seamus.txt
+1: I was in the kitchen
+2: Seamus, that's the dog, was outside
+3: Well, I was in the kitchen
+4: Seamus, my old hound, was outside
+5: Well, the sun sinks slowly
+6: But my old hound just sat right down and cried
+7: I was in the kitchen
+8: Seamus, that's the dog, was outside
+9: Well, I was in the kitchen
+10: Seamus, my old hound, was outside
+
+-------------------------------------------------------------
+echoes.txt
+==========
+I was in the kitchen
+Seamus, that's the dog, was outside
+Well, I was in the kitchen
+Seamus, my old hound, was outside
+Well, the sun sinks slowly
+But my old hound just sat right down and cried
+
+============================================================
+DUMP---------------------------------------------------------
+>>>echoes.txt<<<
+I was in the kitchen
+Seamus, that's the dog, was outside
+Well, I was in the kitchen
+Seamus, my old hound, was outside
+Well, the sun sinks slowly
+But my old hound just sat right down and cried
+
+-------------------------------------------------------------
+DUMP---------------------------------------------------------
+>>>seamus.txt<<<
+I was in the kitchen
+Seamus, that's the dog, was outside
+Well, I was in the kitchen
+Seamus, my old hound, was outside
+Well, the sun sinks slowly
+But my old hound just sat right down and cried
+-------------------------------------------------------------
+DUMP---------------------------------------------------------
+>>>C_echoes.txt<<<
+Overhead the albatross hangs motionless upon the air
+And deep beneath the rolling waves
+In labyrinths of coral caves
+The echo of a distant time
+Comes willowing across the sand
+And everything is green and submarine
+
+And no one showed us to the land
+And no one knows the wheres or whys
+But something stirs and something tries
+And starts to climb towards the light
+
+Strangers passing in the street
+By chance two separate glances meet
+And I am you and what I see is me
+And do I take you by the hand?
+And lead you through the land?
+And help me understand the best I can?
+
+And no one calls us to move on
+And no one forces down our eyes
+And no one speaks and no one tries
+And no one flies around the sun
+
+Cloudless everyday you fall upon my waking eyes
+Inviting and inciting me to rise
+And through the window in the wall
+Come streaming in on sunlight wings
+A million bright ambassadors of morning
+
+And no one sings me lullabies
+And no one makes me close my eyes
+And so I throw the windows wide
+And call to you across the sky
+
+-------------------------------------------------------------
+DUMP---------------------------------------------------------
+>>>C_seamus.txt<<<
+I was in the kitchen
+Seamus, that's the dog, was outside
+Well, I was in the kitchen
+Seamus, my old hound, was outside
+Well, the sun sinks slowly
+But my old hound just sat right down and cried
+
+-------------------------------------------------------------
+**

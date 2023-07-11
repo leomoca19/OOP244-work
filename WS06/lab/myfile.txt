@@ -1,0 +1,201 @@
+#include "TextFile.h"
+using namespace std;
+namespace sdds {
+   Line::operator const char* () const {
+      return m_value;
+   }
+   Line& Line::operator=(const char* lineValue) {
+      clearValue();
+      if(lineValue){
+          m_value = new char[strLen(lineValue) + 1];
+          strCpy(m_value, lineValue);
+      }
+      return *this;
+   }
+   Line::~Line() {
+      clearValue();
+   }
+   void Line::clearValue(){
+      //if(m_value)
+         delete[] m_value;
+      m_value = nullptr;
+   }
+
+   void TextFile::setFilename(const char *fname, bool isCopy)
+   {
+      clearFilename();
+
+      if (!isCopy && fname){
+         m_filename = new char[strLen(fname) + 1];
+         strCpy(m_filename, fname);
+      }
+      else{
+         m_filename = new char[strLen(fname) + 3];
+         strCpy(m_filename, "C_");
+         strCpy(m_filename + 2, fname);
+      }
+   } 
+   void TextFile::setNoOfLines()
+   {
+      string str;
+      ifstream is;
+      is.open(m_filename);
+
+      if (is) {
+          m_noOfLines = 0;
+
+          while(getline(is, str))
+            ++m_noOfLines;
+      }
+
+      is.close();
+   }
+   void TextFile::loadText()
+   {
+       ifstream is;
+       string str;
+       size_t i;
+
+       if(*this && m_noOfLines > 0)
+       {
+           setNoOfLines();
+           clearTextLines();
+           m_textLines = new Line[m_noOfLines];
+       
+           is.open(m_filename);
+
+           i = 0;
+           while (getline(is, str) && i < m_noOfLines){
+               m_textLines[i] = str.c_str();
+               ++i;
+           }
+
+           m_noOfLines = i;
+           is.close();
+       }
+   }
+   void TextFile::saveAs(const char *fileName) const
+   {
+      ofstream os(fileName);
+      for (size_t i = 0; i < m_noOfLines; i++)
+         os << m_textLines[i] << '\n';
+      os.close();
+   }
+   void TextFile::setEmpty()
+   {
+      clearFilename();
+      clearTextLines();
+      m_noOfLines = 0;
+      m_pageSize = 0;
+   }
+   void TextFile::clearFilename()
+   {
+      //if(m_filename){
+         delete[] m_filename;
+         m_filename = nullptr; 
+        //}
+   }
+   void TextFile::clearTextLines()
+   {
+      //if(m_textLines){
+         delete[] m_textLines;
+         m_textLines = nullptr;
+      //}
+   }
+   void TextFile::copyTextFile(const TextFile& t)
+   {
+       setFilename(t.name(), true);
+       setNoOfLines();
+       saveAs(m_filename);
+       loadText();
+   }
+
+   TextFile::TextFile(unsigned pageSize): m_pageSize(pageSize) {}
+   TextFile::TextFile(const char *filename, unsigned pageSize): m_pageSize(pageSize) 
+   {
+      if(filename){
+         setFilename(filename);
+         setNoOfLines();
+         loadText();
+      }
+   }
+   TextFile::TextFile(const TextFile& t): m_pageSize(t.m_pageSize)
+   {
+       if (*this && t) 
+           copyTextFile(t);
+   }
+   TextFile &TextFile::operator=(const TextFile& t)
+   {
+       if (t) {
+         setEmpty();
+         copyTextFile(t);
+      }
+      return *this;
+   }
+   TextFile::~TextFile()
+   {
+      setEmpty();
+   }
+
+   std::ostream &TextFile::view(std::ostream &ostr) const
+   {
+       if (*this && m_textLines) {
+         ostr << m_filename << '\n';
+         for (size_t i = 0; i < strLen(name()); i++)
+            ostr << '=';
+         ostr << '\n';
+
+         size_t j = 1;
+         for (size_t i = 0; i < m_noOfLines; i++){
+            ostr << m_textLines[i];
+            if(j == m_pageSize ){
+               ostr << endl << "Hit ENTER to continue...";
+                   while (getchar() != '\n');
+               j = 0;
+            }
+            else ostr << endl;
+            j++;
+         }
+      }   
+      
+      return ostr;
+   }
+   std::istream &TextFile::getFile(std::istream &istr)
+   {
+      string fname;
+      istr >> fname;
+
+      if (!fname.empty())
+      {
+          setFilename(fname.c_str());
+          loadText();
+      }
+      return istr;
+   }
+   TextFile::operator bool() const
+   {
+      return m_filename && m_filename[0] != '\n';
+   }
+   unsigned TextFile::lines() const
+   {
+      return m_noOfLines;
+   }
+   const char *TextFile::name() const
+   {
+      return m_filename;
+   }
+   const char *TextFile::operator[](unsigned index) const
+   {
+      return (*this && m_textLines && index < m_noOfLines)
+         ? m_textLines[index % m_noOfLines].m_value 
+         : nullptr;
+   }
+   std::ostream &operator<<(std::ostream &ostr, const TextFile &text)
+   {
+      return text.view(ostr);
+   }
+   std::istream &operator>>(std::istream &istr, TextFile &text)
+   {
+      return text.getFile(istr);
+   }
+}
