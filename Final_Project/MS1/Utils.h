@@ -10,7 +10,7 @@
 ///////////////////////////////////////////////////////////////
 #ifndef SDDS_UTILS_H__
 #define SDDS_UTILS_H__
-
+#include <iostream>
 namespace sdds {
     // Copies the srouce character string into the destination
     void strCpy(char* des, const char* src);

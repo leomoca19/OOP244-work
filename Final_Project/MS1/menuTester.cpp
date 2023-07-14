@@ -35,7 +35,7 @@ int main() {
          selections[s - 1]++;
          cout << "you chose " << m1[s - 1] << endl;
       }
-   } while (s != 0 || ~m2 != 0);
+   } while (s != 0 || ~m2 != 0); // when run returns 0, ~m2 does weird stuff
    showOrder(selections, m1);
    return 0;
 }

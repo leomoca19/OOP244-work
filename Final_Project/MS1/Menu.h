@@ -6,11 +6,9 @@
 // Revision History
 // -----------------------------------------------------------
 // Date         Reason
-// 2023/July/8  Preliminary release
+// 2023/July/14  Preliminary release
 ///////////////////////////////////////////////////////////////
-#ifndef SDDS_DATE_H__
-#define SDDS_DATE_H__
-#include <iostream>
+#pragma once
 #include "Utils.h"
 namespace sdds {
 	const size_t MAX_MENU_ITEMS = 20;
@@ -22,16 +20,18 @@ namespace sdds {
 		MenuItem(const char* = nullptr);
 		MenuItem& operator=(const char*);
 		~MenuItem();
-		void operator~();
+		void clearContent();
 
 		MenuItem(const MenuItem&) = delete;
-		Menu& operator=(const MenuItem&) = delete;
+		MenuItem& operator=(const MenuItem&) = delete;
 
 		operator bool()const;
 		operator const char* ()const;
 
-		std::ostream& display(std::ostream& )const;
+	public:
+		std::ostream& display(std::ostream&)const;
 	};
+	std::ostream& operator<<(std::ostream&, const MenuItem&);
 
 	class Menu {
 		MenuItem m_title{};
@@ -41,12 +41,26 @@ namespace sdds {
 		Menu(const Menu&) = delete;
 		Menu& operator=(const Menu&) = delete;
 
+
 	public:
 
 		Menu(const char* = nullptr);
 		Menu& operator=(const char*);
 		~Menu();
-		void operator~();
+
+		std::ostream& display(std::ostream&)const;
+		std::ostream& displayName(std::ostream&)const;
+
+		int operator~();
+		int run();
+		Menu& operator<<(const char*);
+		const char* operator[](size_t index) const;
+
+		operator int() const;
+		operator unsigned int() const;
+		operator bool() const;
+
+		
 	};
+	std::ostream& operator<<(std::ostream& os, const Menu& menu);
 }
-#endif

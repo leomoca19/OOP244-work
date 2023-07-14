@@ -82,12 +82,11 @@ namespace sdds {
    std::istream &Date::read(std::istream &is)
    {
       bool check = true;
-      char year[5]{}, mon[3]{}, day[3]{};
       errCode(NO_ERROR);
 
       if (!DEBUG){
           is >> m_year;
-          if (check = !is.fail()) {
+          if ((check = !is.fail())) {
               is.ignore(1);
               is >> m_mon;
 
