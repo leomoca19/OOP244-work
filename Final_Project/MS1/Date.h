@@ -86,7 +86,7 @@ namespace sdds {
       bool operator<(const Date)const;
       bool operator>(const Date)const;
 
-      size_t operator-(const Date)const;
+      int operator-(const Date)const;
 
       operator bool()const;
    };

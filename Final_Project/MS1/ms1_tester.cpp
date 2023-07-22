@@ -125,7 +125,7 @@ void dateTester() {
       D1,   // daysSince0001_1_1 to be recieved from console
       D2(2023, 6, 26);
 
-   cout << D1 - D2 << " days since ms1 was published" << endl;
+   /*cout << D1 - D2 << " days since ms1 was published" << endl;
    cout << "Current Date: " << D1 << endl;
    cout << "Enter " << col_pink << "abc: " << col_end;
    cin >> D1;
@@ -150,7 +150,7 @@ void dateTester() {
    D2 = Date(2022, 6, 26);
    dateOperatorTester(D2, D1);
    hr();
-   D2 = Date(2024, 6, 26);
+   D2 = Date(2024, 6, 26);*/
    dateOperatorTester(D2, D1);
    hr();
 }

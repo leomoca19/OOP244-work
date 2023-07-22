@@ -164,7 +164,7 @@ namespace sdds {
       return daysSince0001_1_1() > d.daysSince0001_1_1();
    }
 
-   size_t Date::operator-(const Date d)const{
+   int Date::operator-(const Date d)const{
       return daysSince0001_1_1() - d.daysSince0001_1_1();
    }
 

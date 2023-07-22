@@ -62,18 +62,17 @@ namespace sdds {
 	ostream& Menu::display(ostream& ostr) const
 	{
 		if (m_title)
-		{
 			ostr << *this << ":\n";
 
-			for (size_t i = 0; i < m_itemArraySz; i++)
-			{
-				ostr << ' ' << i + 1 << "- ";
-				m_itemArray[i]->display(ostr) << '\n';
-			}
-
-			ostr << " 0- Exit\n"
-					"> ";
+		for (size_t i = 0; i < m_itemArraySz; i++)
+		{
+			ostr << ' ' << i + 1 << "- ";
+			m_itemArray[i]->display(ostr) << '\n';
 		}
+
+		ostr << " 0- Exit\n"
+				"> ";
+		
 
 		return ostr;
 	}
@@ -122,7 +121,7 @@ namespace sdds {
 
 		do{
 			repeat = false;
-			display(cout);
+			display(cout); 
 
 			while (!(cin >> selection) || selection < 0 || selection > (int)m_itemArraySz) {
 				cout << "Invalid Selection, try again: ";
@@ -130,13 +129,6 @@ namespace sdds {
 				cin.ignore(999, '\n');
 			}
 
-			if (selection == 0) {
-				cout << " 1- Order more\n"
-						" 0- Exit\n"
-						"> ";
-				cin >> selection;
-				repeat = (selection != 0);
-			}
 		} while (repeat);
 
 		return selection;
