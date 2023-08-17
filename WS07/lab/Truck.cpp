@@ -20,33 +20,31 @@ namespace sdds {
 		moveTo(address);
 	}
 
-	bool Truck::addCargo(double cargo)
-	{
-		//bool check{};
-		bool check = (cargo + m_cargo <= m_capacity) ? 1 : 0;
+	bool Truck::addCargo(double cargo) {
+		bool cargoAdded = false;
+		if(!*this) {
+			if ((m_cargo + cargo) <= m_capacity)
+				m_cargo += cargo;
+			else m_cargo = m_capacity;
 
-		/*if (check = (cargo + m_cargo <= m_capacity))
-			m_cargo += cargo;*/
-		(check) ? m_cargo += cargo : 0;
-
-		//return (check) ? m_cargo += cargo : 0;
-		return check;
-
+			cargoAdded = true;
+		}
+		return cargoAdded;
 	}
-
 	bool Truck::unloadCargo()
 	{
-		bool check = (m_cargo = 0); //to be checked
+		//bool check = (m_cargo = 0); //to be checked
+		bool check{};
+
+		if ((check = (m_cargo > 0)))
+			m_cargo = 0;
+
 		return check;
 	}
 
 	ostream& Truck::write(ostream& os) const
 	{
-		MotorVehicle::write(os);
-
-		os	<< " | [" << m_cargo << "]/[" << m_capacity << "]\n";
-
-		return os;
+		return MotorVehicle::write(os) << " | " << m_cargo << "/" << m_capacity;
 	}
 	istream& Truck::read(istream& in)
 	{
@@ -59,6 +57,10 @@ namespace sdds {
 		in >> m_cargo;
 
 		return in;
+	}
+	Truck::operator bool() const
+	{
+		return m_capacity == m_cargo;
 	}
 	std::ostream& operator<<(std::ostream& os, const Truck& T)
 	{

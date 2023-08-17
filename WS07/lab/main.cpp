@@ -37,7 +37,7 @@ void printHeader(const char* title)
 
 void moveAndLoad(Truck& aTruck, const char* destination, double cargo)
 {
-	cout << aTruck << endl;
+	//cout << aTruck << endl;
 	aTruck.moveTo(destination);
 	if (aTruck.addCargo(cargo))
 		cout << "Cargo loaded!\n";
@@ -48,7 +48,7 @@ void moveAndLoad(Truck& aTruck, const char* destination, double cargo)
 
 void moveAndUnload(Truck& aTruck, const char* destination)
 {
-	cout << aTruck << endl;
+	//cout << aTruck << endl;
 	aTruck.moveTo(destination);
 	if (aTruck.unloadCargo())
 		cout << "Cargo unloaded!\n";
@@ -93,10 +93,10 @@ int main()
 		moveAndUnload(aTruck, "Toronto");
 
 
-		printHeader("T4: Read/Write");
-		cin >> aTruck;
-		cout << endl << (MotorVehicle)aTruck;
-		cout << endl << aTruck << endl << endl;
+		//printHeader("T4: Read/Write");
+		//cin >> aTruck;
+		//cout << endl << (MotorVehicle)aTruck;
+		//cout << endl << aTruck << endl << endl;
 	}
 }
 

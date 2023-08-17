@@ -1,0 +1,20 @@
+/***********************************************************************
+Author: Leonardo Caceres
+Student number: 152877205
+Email: lde-la-mora-canceres@myseneca.ca
+Date of completion: July-20-2023
+***********************************************************************/
+
+In completing Workshop #7 on Derived Classes & Custom I/O Operators, I gained a deeper understanding of key concepts in C++ programming. The workshop focused on the concept of inheritance, which allows us to create a derived class that inherits attributes and functionalities from a base class. This inheritance enables code reuse and helps in creating a hierarchical structure of classes. I learned how to define a parent class, MotorVehicle, and derive a child class, Truck, from it.
+
+One essential aspect covered in the workshop was shadowing, where a derived class can override a member function of the base class with its implementation. This technique allows us to provide specific behaviors for the derived class while retaining access to the base class version of the function when needed. It provides flexibility and customization options in the class hierarchy.
+
+Additionally, the workshop delved into custom input/output operators, particularly overloading the << and >> operators. This allowed me to control how objects of our custom classes are displayed and read from input streams. The ability to customize these operators enhances the clarity and readability of the code, making it more intuitive to work with our classes.
+
+Another valuable skill learned in this workshop was organizing code into multiple files. By creating header files (.h) and implementation files (.cpp), we can modularize our code, making it easier to manage and maintain. It also emphasized the importance of namespaces, as we encapsulated the class implementations within the sdds namespace to avoid naming conflicts.
+
+Throughout the workshop, the importance of object-oriented design principles was highlighted, including encapsulation, abstraction, and modularity. These principles contribute to writing clean and maintainable code.
+
+One of the main challenges I encountered during the workshop was ensuring proper class inheritance and correctly overriding functions. Understanding how shadowing works and when to call the base class functions helped me overcome this challenge.
+
+In conclusion, Workshop #7 provided me with a comprehensive understanding of derived classes, custom I/O operators, and object-oriented design in C++. It has enriched my knowledge of C++ programming and equipped me with valuable skills to create well-structured and efficient code in future projects.

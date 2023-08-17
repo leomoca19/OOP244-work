@@ -43,7 +43,7 @@ namespace sdds{
 
 	ostream& MotorVehicle::write(ostream & os) const
 	{
-		return os << "| " << m_yearBuilt << " | " << m_plate << " | " << m_address/* << "\n"*/;
+		return os << "| " << m_yearBuilt << " | " << m_plate << " | " << m_address;
 	}
 	istream& MotorVehicle::read(istream& in) {
 		cout << "Built year: ";

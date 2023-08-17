@@ -5,10 +5,11 @@
 |Milestone| Revision |  Overview<br />session |Comments |
 |------|:---:|:---:|:----|
 | [MS1](#milestone-1) | V1.0 | | |
+|  | V1.1 | Submission script corrected| The submission script dates were incorrect and they are now corrected.<br />Please wait for yor professor to fetch the updated version |
 | [MS2](#milestone-2) | V1.0 |  |  |
-| [MS3](#milestone-3) | V1.0  |  | |
-| [MS4](#milestone-4) | V1.0  | |  |
-| [MS5](#milestone-5) | V1.0 |  | |
+| [MS3](#milestone-3) | V1.0  |  | Updated dates and tester program |
+| [MS4](#milestone-4) | V1.0  | | Updated dates and tester program |
+| [MS5](#milestone-5) | V1.0 |  | Updated dates and tester program |
 
 When Books and other publications arrive in the Seneca library, they should be tagged and put on shelves, so they are easily retrievable to be lent out to those who need them. 
 Your task is to design an application that receives the publications and stores them into the system with the information needed for their retrieval. 
@@ -185,7 +186,7 @@ sets the error code value
 int systemYear()const;         
 ```
 
-returns the current system year (2021 for this semester)
+returns the current system year (2023 for this semester)
 
 ```C++
 bool bad()const;             
@@ -875,7 +876,310 @@ and follow the instructions.
 # Milestone 3
 ## Streamable Interface module and Publication class module
 
-TBA
+> An Interface is an abstract base class with only pure virtual functions.
+
+This milestone will include the Date and Utils modules. 
+
+Before starting to develop milestone 3, please apply the following modifications to the Date module:
+
+### In Date.cpp
+- In Date::read() method:
+   remove "flushing the keyboard" (i.e. `cin.ignore(1000,'\n')`) at the end of your read function. The read function should not flush the keyboard when the reading process is done.
+
+- Add the following global variable (for testing purposes) to the top of the **sdds** namespace in Date.cpp.
+```C++
+   bool sdds_test = false;
+   int sdds_year = 2023;
+   int sdds_mon = 12;
+   int sdds_day = 25;
+```
+- replace **systemYear** and **setToToday** methods with the following:
+```C++
+   int Date::systemYear()const {
+      int theYear = sdds_year;
+      if (!sdds_test) {
+         time_t t = time(NULL);
+         tm lt = *localtime(&t);
+         theYear = lt.tm_year + 1900;
+      }
+      return theYear;
+   }
+   void Date::setToToday() {
+      if (sdds_test) {
+         m_day = sdds_day;
+         m_mon = sdds_mon;
+         m_year = sdds_year;
+      }
+      else {
+         time_t t = time(NULL);
+         tm lt = *localtime(&t);
+         m_day = lt.tm_mday;
+         m_mon = lt.tm_mon + 1;
+         m_year = lt.tm_year + 1900;
+      }
+      errCode(NO_ERROR);
+   }
+```
+
+
+### in Date.h 
+- Add the following to the bottom of the **sdds** namespace; This will make the global variables added to Date.cpp, truly global for any code including "Date.h".
+```C++
+   extern bool sdds_test;
+   extern int sdds_year;
+   extern int sdds_mon;
+   extern int sdds_day;
+```
+
+## Types of publications in Seneca Library
+Seneca Library holds two types of Publication; Periodical (like newspapers and Magazines) and Books. 
+
+Publications are not loaned out to members. Members can check them out and read them in the library. These publications are put back on their shelves at the end of the day.
+
+Books can be borrowed and returned within 15 days. After 15 days, the member will be charged daily for a late penalty.
+
+## General definitions of the library system. 
+Create a header file called **"Lib.h"** to hold all the general values of the system. 
+Add the following and any other general values you find necessary to this header file. This header file should be included anywhere any of these values are needed. 
+```C++
+const int SDDS_MAX_LOAN_DAYS = 15; 
+     // maximum number of day a publication can be borrowed with no penalty
+const int SDDS_TITLE_WIDTH = 30;
+    // The width in which the title of a publication should be printed on the console
+const int SDDS_AUTHOR_WIDTH = 15;
+    // The width in which the author name of a book should be printed on the console
+const int SDDS_SHELF_ID_LEN = 4;
+   // The width in which the shelf id of a publication should be printed on the console
+const int SDDS_LIBRARY_CAPACITY = 5000;
+   // Maximum number of publications the library can hold.
+```
+
+
+## Streamable Interface Modules.
+Create an Interface called **Streamable** to enforce implementation of the following methods. Any class inherited from Streamable will have the capability to be inserted into or extracted from a  stream.
+
+### Streamable Pure Virtual funcitons
+Add the following pure virtual function to Streamable:
+
+#### `write` pure virtual function
+This method is not capable of modifying the Streamable object.  **write** receives and returns a reference of an `ostream` object.
+
+Functions overriding this function will write into an ostream object.
+
+#### `read` pure virtual function
+**read** receives and returns a reference of an `istream` object.
+
+Functions overriding this function will read from an istream object.
+
+#### `conIO`
+This method is not capable of modifying the Streamable object. **conIo** receives a reference of an `ios` object and returns a Boolean.
+
+Functions overriding this function will determine if the incoming `ios` object is a console IO object or not.
+
+#### `Boolean conversion operator overload` (pure virtual)
+
+Boolean conversion overloads of this method will return if the Streamable object is in a valid state or not.
+
+### destructor
+Add an empty virtual destructor to this interface to guaranty that the descendants of the Streamable are removed from memory with no leak.
+
+### Insertion operator overload
+Overload the insertion operator so a constant object of type Streamable can be written on an ostream object only if the Streamable object is in a valid state. Otherwise, the function will quietly ignore the insertion action.
+
+
+### Extraction operator overload
+Overload the extraction operator so an object of type Streamable can be read from an istream object.
+
+
+
+
+
+## Publication class module
+The publication class is a general encapsulation of any periodic publication. 
+> Later by adding an author to the descendant of the **Publication** class we will encapsulate a **Book** for the system.
+
+### Publication Attributes
+#### m_title
+**m_title** is a c-string to hold a dynamic title for the publication. 
+> To ease the implementation, let's assume this dynamic array can not be more than 255 characters long.
+
+This attribute is **null** by default.
+#### m_shelfId
+Hold the location of the publication in the library. 
+**m_shelfId** is a c-string that is exactly 4 characters long. 
+
+This attribute is an empty string by default.
+
+#### m_membership
+This attribute is an integer to hold a 5 digit membership number of members of the library. 
+
+In this class, if the membership number is '0', it means the publication is available and is not checked out by any members. 
+
+If the membership number is a five-digit number, it means the publication is checked out by the member holding that membership number.
+
+This attribute is zero by default.
+
+#### m_libRef
+This serial number is used internally to uniquely identify each publication in the system. 
+
+This attribute is -1 by default.
+
+#### m_date
+A Date object.
+
+In periodical publications, this date is used for the publish date of the item. 
+
+In Books, this date is used to keep the date on which the book was borrowed by the member.
+
+The Date, by default, is set to the current date.
+
+### Constructor (default)
+Sets all the attributes to their default values.
+
+### Methods
+#### Modifiers
+```C++  
+virtual void set(int member_id);
+   // Sets the membership attribute to either zero or a five-digit integer.
+void setRef(int value);
+   // Sets the **libRef** attribute value
+void resetDate();
+   // Sets the date to the current date of the system.
+```
+
+#### Queries
+
+```C++
+virtual char type()const;
+   //Returns the character 'P' to identify this object as a "Publication object"
+bool onLoan()const;
+   //Returns true is the publication is checkout (membership is non-zero)
+Date checkoutDate()const; 
+   //Returns the date attribute
+bool operator==(const char* title)const;
+   //Returns true if the argument title appears anywhere in the title of the 
+   //publication. Otherwise, it returns false; (use strstr() function in <cstring>)
+operator const char* ()const;
+   //Returns the title attribute
+int getRef()const;
+   //Returns the libRef attirbute. 
+```
+ 
+
+### Streamable pure virtual function implementations
+
+#### `bool conIO(ios& io)const`
+Returns true if the address of the **io** object is the same as the address of either the **cin** object or the **cout** object.
+
+#### `ostream& write(ostream& os) const`
+If the **os** argument is a console IO object (use **conIO()**), print **shelfId**, **title**, **membership** and **date** attributes as the following format (title is left-justified padded with dots)
+
+```text
+         1         2         3         4         5         6         7 
+1234567890123456789012345678901234567890123456789012345678901234567890
+| P001 | The Toronto Star.............. | 34037 | 2023/11/17 |
+| P007 | Macleans Magazine............. |  N/A  | 2023/11/11 |
+```
+Otherwise:
+
+Print the type() and then libRef, shelfId, title, membership and date attributes in a tab-separated format. 
+```Text
+P	2001	P001	The Toronto Star	34037	2023/11/17
+```
+
+No newline is printed afterwards either way.
+
+#### `istream& read(istream& istr)`
+Read all the values in local variables before setting the attributes to any values.
+
+First, clear all the attributes by freeing the memory and setting everything to their default values.
+
+Then, if the istr argument is a console IO object (use conIO()) read the attributes as  follows:
+
+- prompt: `"Shelf No: "`
+- read the shelf number up to its limit (see Lib.h).
+- if the number is not exactly the length it is supposed to be, set the istr to a fail state manually.
+- prompt: `"Title: "`
+- read the title
+- prompt: `"Date: "`
+- read the date
+> in this case the libRef value is left with its default value.
+
+Otherwise, assume reading begins with libRef attribute as if the type 'P' is not in the file.
+
+- read the libRef number
+- skip the tab
+- read the shelf number
+- skip the tab
+- read the title 
+- skip the tab
+- read the membership
+- skip the tab
+- read the date
+
+Either way if the date is in an invalid state set the istr to a fail state manually
+
+After the process of reading is done if istr is in a valid state:
+
+- Dynamically store the title into the title attribute
+- copy the shelf id into the shelfId attribute
+- set the membership
+- set the date
+- set the libRef attribute
+
+At the end return the istr argument.
+
+#### `operator bool() const `
+
+Returns true if neither of the title or shelfId attributes is null or empty. Otherwise, it will return false.
+
+### The Rule of three
+Make sure this object complies with the guidelines of the Rule of three so the copying and assignment and destruction are done safely and without any memory leak.
+
+
+## the Tester program
+
+[ms3_tester.cpp](MS3/ms3_tester.cpp)
+ 
+## Tester Output
+[MS3 tester output](MS3/output.md)
+
+
+
+## MS3 Submission
+
+
+> If you would like to successfully complete the project and be on time, **start early** and try to meet all the due dates of the milestones.
+
+
+Upload your source code and the tester program (**Utils.cpp, Utils.h, Date.cpp, Date.h, Streamable.cpp, Streamable.h, Publication.cpp, Publication.h,Periodicals.txt, and ms3_tester.cpp**) to your `matrix` account. Compile and run your code using the `g++` compiler [as shown in the introduction](#compiling-and-testing-your-program) and make sure that everything works properly.
+
+Then, run the following command from your account (replace `profname.proflastname` with your professor’s Seneca userid):
+```
+~profname.proflastname/submit 2??/prj/m?
+```
+and follow the instructions.
+
+- *2??* is replaced with your subject code
+- *m?* is replaced with your milestone
+
+
+### The submit program's options:
+```bash
+~prof_name.prof_lastname/submit DeliverableName [-submission options]<ENTER>
+[-submission option] acceptable values:
+  "-due":
+       Shows due dates only
+       This option cannot be used in combination with any other option.
+  "-skip_spaces":
+       Do the submission regardless of incorrect horizontal spacing.
+       This option may attract penalty.
+  "-skip_blank_lines":
+       Do the submission regardless of incorrect vertical spacing.
+       This option may attract penalty.
+  "-feedback":
+       Check the program execution without submission.
+```
 
 ## [Back to milestones](#milestones)
 
@@ -884,12 +1188,776 @@ TBA
 
 ## The **Book** class
 
-TBA
+This milestone will require the following modules and header files:
+- Lib.h
+- Uitls
+- Date
+- Streamable
+- Publication
+
+### The Book class implementation
+The Book class is derived from the Publication class. A book is a publication with an "Author name". 
+ 
+The book class only has one attribute that is a pointer to a character to hold an author's name Dynamically. 
+
+#### Construction
+A book is created empty by default, in a safe empty state. 
+
+#### The rule of three
+Implement what is needed to comply with the rule of three so a book can safely be copied or assigned to another book.
+
+### Methods
+The book class overrides the following virtual methods and type conversion operator.
+- type
+- write
+- read
+- set
+- operator bool()
+
+### Method implementations:
+
+#### type method
+Returns the character "B".
+
+#### write method
+- First, it will invoke the write of its Base class.
+- If the incoming argument is a console IO object.
+   - writes a single space
+   - writes the author's name in SDDS_AUTHOR_WIDTH spaces. If the author's name is longer than the SDDS_AUTHOR_WIDTH value, it will cut it short and writes exactly  SDDS_AUTHOR_WIDTH characters. Note that this should not modify the author's name.
+   - writes `" |"`
+- If the incoming argument is not a console IO object
+   - writes a tab character `'\t'` 
+   - writes the author's name
+- returns the incoming ostream.
+
+#### Read
+Read the author name in local variables before setting the attribute to any value. (to make it easier lets assume the author's name can not be more than 256 characters)
+
+- First, invoke the read of the Base class.
+- Free the memory held for the author's name
+-  If the incoming argument is a console IO object
+   - ignore one character (skip the '\n')
+   - prompt  `"Author: "`
+   - read the author's name 
+- If the incoming argument is not a console IO object
+   - ignore the tab character
+   - read the author's name
+
+Then if the incoming istream object is not in a fail state, dynamically hold the author's name in the char pointer attribute of the book class.
+
+At the end return the incoming istream object.
+
+#### set
+- invoke the set of the base class to set the member id
+- reset the date to the current date.
+
+#### operator bool()
+return true if the author's name exists and is not empty and the base class's operator bool() has returned true.
+
+## the Tester program
+
+[ms4_tester.cpp](MS4/ms4_tester.cpp)
+
+## MS4 tester program output
+[MS4 tester output](MS4/output.md)
+
+
+## MS4 Submission 
+
+
+> If you would like to successfully complete the project and be on time, **start early** and try to meet all the due dates of the milestones.
+
+
+Upload your source code and the tester program (**Utils.cpp, Utils.h, Date.cpp, Date.h, Streamable.cpp, Streamable.h, Publication.cpp, Publication.h,Book.cpp,Book.h,Books.txt, and ms4_tester.cpp**) to your `matrix` account. Compile and run your code using the `g++` compiler [as shown in the introduction](#compiling-and-testing-your-program) and make sure that everything works properly.
+
+Then, run the following command from your account (replace `profname.proflastname` with your professor’s Seneca userid):
+```
+~profname.proflastname/submit 2??/prj/m?
+```
+and follow the instructions.
+
+- *2??* is replaced with your subject code
+- *m?* is replaced with your milestone
+
+
+### The submit program's options:
+```bash
+~prof_name.prof_lastname/submit DeliverableName [-submission options]<ENTER>
+[-submission option] acceptable values:
+  "-due":
+       Shows due dates only
+       This option cannot be used in combination with any other option.
+  "-skip_spaces":
+       Do the submission regardless of incorrect horizontal spacing.
+       This option may attract penalty.
+  "-skip_blank_lines":
+       Do the submission regardless of incorrect vertical spacing.
+       This option may attract penalty.
+  "-feedback":
+       Check the program execution without submission.
+```
+
+## [Back to milestones](#milestones)
+
 
 # Milestone 5
 ## The Seneca Library Application
 
-TBA
+To complete your project for this semester, create a project called **ms5**. Then go back to all your milestones,  and add all the latest versions of your modules (developed throughout the first 4 milestones) to **ms5**.
+
+Get the **PublicationSelector** module (fully developed by another developer) from the project repository and add it to your project. Use **pubSel_Tester.cpp** to test the module and understand its usage.
+
+### PublicationSelector Module
+
+The PublicationSelector module holds the addresses of a selection of the Publications in an array and lets the user select one of them. Upon user's selection, the Library Reference number of the selected publication is returned to the caller module for further actions. 
+
+For example, the array of Publications can be searched for a match to a specific title, and the matches found in the array can be inserted into the PublicationSelector. 
+Then the PublicationSelector can be run to display the search results and ask the user to select one of them.  
+
+The logic below (in pubSel_Tester.cpp) is searching all the publications in "LibRecs.txt", displaying the matches to "Harry" and "MoneySense" and letting the user select one.
+
+```C++
+// Final Project 
+// PublicationSelector Usage demonstration
+// File	pubSel_Tester.cpp
+// Version 1.0
+// Author	Fardad Soleimanloo
+// Revision History
+// -----------------------------------------------------------
+// Name               Date                 Reason
+/////////////////////////////////////////////////////////////////
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <fstream>
+#include <cstring>
+#include "Publication.h"
+#include "Book.h"
+#include "PublicationSelector.h"
+
+using namespace std;
+using namespace sdds;
+
+// prints the publication with the library reference number "ref:
+void prnPub(Publication* p[], int size, int ref) {
+   int i;
+   for (i = 0; i < size; i++) {
+      if (ref == p[i]->getRef()) {
+         cout << *p[i] << endl;
+         i = size; // Exit the loop.
+      }
+   }
+}
+int main() {
+   ifstream infile("LibRecs.txt");
+   Publication* p[1000]{};
+   PublicationSelector ps("Publications with Harry and MoneySencse", 5);
+   char type{};
+   int i;
+   for (i = 0; infile; i++) {
+      infile >> type;
+      infile.ignore();
+      if (infile) {
+         if (type == 'P')
+            p[i] = new Publication;
+         else if (type == 'B')
+            p[i] = new Book;
+         if (p[i]) {
+            infile >> *p[i];
+            // find publications with Harry or MoneySence in the title
+            if (strstr(*p[i], "Harry") || strstr(*p[i], "MoneySense"))
+               ps << p[i]; // insert into PublicationSelector if there is match
+         }
+      }
+   }
+   if (ps) {
+      ps.sort(); // sort them based on date and title
+      int ref = ps.run(); // display the publications and select one
+      if (ref) {
+         cout << "Selected Library Reference Number: " << ref << endl;
+         prnPub(p, 100, ref);
+      }
+      else {
+         cout << "Aborted by user!";
+      }
+   }
+   else {
+      cout << "No matches to \"Harry\" and \"MoneySense\" found" << endl;
+   }
+   for (i = 0; p[i]; i++) {  //free the allocated memory
+      delete p[i];
+   }
+   return 0;
+}
+```
+
+## LibApp Module
+Complete the LibApp module as follows
+
+Add the following attributes to the LibApp Module.
+
+### File name
+Add an array of 256 characters to hold the publication data file name.
+
+### Publication Pointers Array 
+Create and add an array of Publication pointers to the size of SDDS_LIBRARY_CAPACITY.  This array will be populated with all the records of the publication data file when the LibApp is instantiated. 
+> We will call Publication Pointers Array "PPA" for short, from now on. 
+
+### Number Of Loaded Publications 
+Add an integer to hold the number of Publications loaded into the PPA. 
+> We will call this attribute "NOLP" for short, from now on.
+
+### Last Library Reference Number 
+Add an integer to hold the last library reference number read from the data file. This number will be used to assign new library reference numbers to new publications added to the library. When a new publication is added to the library, this number will be added by one and then assigned to the new publication.
+Doing this; each publication in the library will have a unique library reference number.
+> We will call this attribute "LLRN" for short, from now on.
+
+### Publication Type Menu
+Add a Menu to the LibApp for selection of publication type. 
+The title of this menu is: "Choose the type of publication:"
+
+The publication type menu should also provide two selections:
+"Book" and "Publication". 
+
+Setup the publication type menu in the constructor as you did for the main and exit menus.
+
+## Method Implementations 
+Create new methods or Modify MS2 methods for the following
+### The load method 
+First print "Loading Data" and then open the data file for reading and read all the publications in dynamic instances pointed by the PPA Array. 
+
+Do this by first reading a single character for the type of publication and then dynamically instantiating the corresponding object into the next available PPA element. Then extract the object from the file stream and add one to the NOLP. Since the extraction operator calls the proper read function virtually, the object will be properly read from the file. 
+
+Continue this until the ifstream reading fails.
+
+At the end set the LLRN to the reference number of the last publication read.
+
+> See the `pubSel_Tester.cpp` that uses a similar logic to load the publications for example...
+
+### The save method 
+First print "Saving Data" and then open the data file stream for overwriting.  (ofstream)
+Go through the elements of PPA up to the N0LP. Insert all elements into the ofstream object except those with 0 (zero) as Library Reference Number.  (return value of getRef() method)
+
+> Publications that have the reference number of 0 (zero) are deleted by the user (removed from the library) and therefore should not be saved back into the data file. We refer to these publications as deleted ones. 
+
+### search 
+Add needed arguments so the search function can be called in three different modes:
+1. Search all
+2. Search Checkout Items 
+Search only those publications which are on loan by library members
+3. Search Available Items
+Search only those publications which are not on loan
+
+Search will use an instance of PublicationSelector class to collect the search matches and user selection.
+The prompt of the PublicSelector should be:
+"Select one of the following found matches:"
+The page size for the selector menu should be 15 (the default value)
+
+First, get the type of publication to search for from the user. (user the type selection Menu of the class)
+
+Then print `"Publication Title: "` and get the title to search the PPA for. (up to 256 characters)
+
+Go through all the publications in the PPA and base on the method of search (all the items, on loan items or available ones) check each element and if the publication (pointed by the PPA element) is not deleted and type matches the selection of the user and the title contains the title the user entered, insert it into the PublicationSelector object. 
+
+If matches are found, sort the result and get the user's selection ***and return the library reference number***. If not print "No matches found!"
+
+If the user aborts at any stage print "Aborted!"
+
+#### Abort Scenarios  (searching all)
+```text
+Choose the type of publication:
+ 1- Book
+ 2- Publication
+ 0- Exit
+> 0
+Aborted!
+-------------------------------------------------------
+Choose the type of publication:
+ 1- Book
+ 2- Publication
+ 0- Exit
+> 1
+Publication Title: Harry
+Select one of the following found matches:
+ Row  |LocID | Title                          |Mem ID | Date       | Author          |
+------+------+--------------------------------+-------+------------+-----------------|
+   1- | T343 | Harry Potter.................. | 65205 | 2023/07/19 | J. K. Rowling   |
+   2- | F861 | Harry Potter and the Chamber o |  N/A  | 2023/07/24 | J. K. Rowling   |
+   3- | C872 | Harry Potter and the Deathly H | 64984 | 2023/07/17 | J. K. Rowling   |
+   4- | C945 | Harry Potter and the Goblet of |  N/A  | 2023/07/14 | J. K. Rowling   |
+   5- | C332 | Harry Potter and the Half/Bloo | 85952 | 2023/07/22 | J. K. Rowling   |
+   6- | L290 | Harry Potter and the Order of  |  N/A  | 2023/07/11 | J. K. Rowling   |
+   7- | D208 | Harry Potter and the Philosoph | 72685 | 2023/07/19 | J. K. Rowling   |
+   8- | R856 | Harry Potter and the Prisoner  |  N/A  | 2023/07/10 | J. K. Rowling   |
+> X (to Exit)
+> Row Number(select publication)
+> x
+Aborted!
+```
+#### Search on loan
+```text
+Choose the type of publication:
+ 1- Book
+ 2- Publication
+ 0- Exit
+> 1
+Publication Title: Harry
+Select one of the following found matches:
+ Row  |LocID | Title                          |Mem ID | Date       | Author          |
+------+------+--------------------------------+-------+------------+-----------------|
+   1- | T343 | Harry Potter.................. | 65205 | 2023/07/19 | J. K. Rowling   |
+   2- | C872 | Harry Potter and the Deathly H | 64984 | 2023/07/17 | J. K. Rowling   |
+   3- | C332 | Harry Potter and the Half/Bloo | 85952 | 2023/07/22 | J. K. Rowling   |
+   4- | D208 | Harry Potter and the Philosoph | 72685 | 2023/07/19 | J. K. Rowling   |
+> X (to Exit)
+> Row Number(select publication)
+>
+```
+#### Search available publications
+```Text
+Choose the type of publication:
+ 1- Book
+ 2- Publication
+ 0- Exit
+> 1
+Publication Title: Harry
+Select one of the following found matches:
+ Row  |LocID | Title                          |Mem ID | Date       | Author          |
+------+------+--------------------------------+-------+------------+-----------------|
+   1- | F861 | Harry Potter and the Chamber o |  N/A  | 2023/07/24 | J. K. Rowling   |
+   2- | C945 | Harry Potter and the Goblet of |  N/A  | 2023/07/14 | J. K. Rowling   |
+   3- | L290 | Harry Potter and the Order of  |  N/A  | 2023/07/11 | J. K. Rowling   |
+   4- | R856 | Harry Potter and the Prisoner  |  N/A  | 2023/07/10 | J. K. Rowling   |
+> X (to Exit)
+> Row Number(select publication)
+>
+```
+### `Publication* getPub(int libRef)`  method
+Create a method to return the address of a Publication object in the PPA that has the library reference number matching the "libRef" argument. 
+
+### the newPublication() method
+If the NOLP is equal to the SDDS_LIBRARY_CAPACITY, print: `"Library is at its maximum capacity!"` and exit. 
+
+Otherwise, 
+- print: `"Adding new publication to the library"`
+- get the publication type from the user.
+- in a publication pointer, instantiate a dynamic "Publication" or "Book" based on the user's choice.
+- Read the instantiated object from the cin object.
+- If the cin fails, flush the keyboard, print "Aborted!" and exit.
+- If the cin is ok, then confirm that the user wants to add the publication to the library using this prompt:
+`"Add this publication to the library?"`. If the user did not confirm, print "Aborted!" and exit.
+- After the user confirms, if the publication object is valid
+   - Add one to the LLRN and set the library reference number to the value
+   - Add the publication object's address to the end of the PPA and add one to the NOLP.
+   - set the "changed" flag to true
+   - print: `"Publication added"`
+- If the publication object is not valid print: `"Failed to add publication!"` and delete the allocated memory.
+
+#### Adding a new publication to the library:
+```Text
+Seneca Library Application
+ 1- Add New Publication
+ 2- Remove Publication
+ 3- Checkout publication from library
+ 4- Return publication to library
+ 0- Exit
+> 1
+Adding new publication to the library
+Choose the type of publication:
+ 1- Book
+ 2- Publication
+ 0- Exit
+> 2
+Shelf No: S001
+Title: Seneca Student Handbook
+Date: 2022/1/5
+Add this publication to the library?
+ 1- Yes
+ 0- Exit
+> 1
+Publication added
+```
+### The removePublication Method
+- print: `"Removing publication from the library"`
+- Search all the publications
+- If the user selects a publication and confirms to remove the publication using the prompt: `"Remove this publication from the library?"`
+   - Set the library reference of the selected publication to 0 (zero)
+   - set the "changed" flag to true
+   - print: `"Publication removed"`
+
+#### removing a publication from the library 
+```Text
+Seneca Library Application
+ 1- Add New Publication
+ 2- Remove Publication
+ 3- Checkout publication from library
+ 4- Return publication to library
+ 0- Exit
+> 2
+Removing publication from the library
+Choose the type of publication:
+ 1- Book
+ 2- Publication
+ 0- Exit
+> 2
+Publication Title: Sen
+Select one of the following found matches:
+ Row  |LocID | Title                          |Mem ID | Date       | Author          |
+------+------+--------------------------------+-------+------------+-----------------|
+   1- | P008 | MoneySense Magazine........... |  N/A  | 2023/07/11 |
+   2- | P008 | MoneySense Magazine........... | 72614 | 2023/07/16 |
+   3- | P008 | MoneySense Magazine........... | 48096 | 2023/07/17 |
+   4- | P008 | MoneySense Magazine........... | 89325 | 2023/07/17 |
+   5- | P008 | MoneySense Magazine........... | 33074 | 2023/07/17 |
+   6- | P008 | MoneySense Magazine........... |  N/A  | 2023/07/18 |
+   7- | P008 | MoneySense Magazine........... | 70451 | 2023/07/24 |
+   8- | S001 | Seneca Student Handbook....... |  N/A  | 2022/01/05 |
+> X (to Exit)
+> Row Number(select publication)
+> 8
+| S001 | Seneca Student Handbook....... |  N/A  | 2022/01/05 |
+Remove this publication from the library?
+ 1- Yes
+ 0- Exit
+> 1
+Publication removed
+```
+
+### The checkOutPub method
+- print: `"Checkout publication from the library"`
+- Search in available publications only
+- If the user selects a publication and confirms to checkout using the prompt: `"Check out publication?"`
+   - read a 5 digit number from the console, if invalid print: `"Invalid membership number, try again: "` and read again
+   - set the membership number of the selected publication the integer value. 
+   - set the changed flag to true
+   - print: `"Publication checked out"`
+
+#### Checking out a publication
+```Text
+Seneca Library Application
+ 1- Add New Publication
+ 2- Remove Publication
+ 3- Checkout publication from library
+ 4- Return publication to library
+ 0- Exit
+> 3
+Checkout publication from the library
+Choose the type of publication:
+ 1- Book
+ 2- Publication
+ 0- Exit
+> 2
+Publication Title: Sen
+Select one of the following found matches:
+ Row  |LocID | Title                          |Mem ID | Date       | Author          |
+------+------+--------------------------------+-------+------------+-----------------|
+   1- | P008 | MoneySense Magazine........... |  N/A  | 2023/07/11 |
+   2- | P008 | MoneySense Magazine........... |  N/A  | 2023/07/18 |
+   3- | S001 | Seneca Student Handbook....... |  N/A  | 2024/01/05 |
+> X (to Exit)
+> Row Number(select publication)
+> 3
+| S001 | Seneca Student Handbook....... |  N/A  | 2022/01/05 |
+Check out publication?
+ 1- Yes
+ 0- Exit
+> 1
+Enter Membership number: 12345
+Publication checked out
+```
+
+### The returnPub() Method
+- Print: `"Return publication to the library"`
+- Search for "on loan" publications only
+- If the user selects a publication and confirms the return using the prompt: `"Return Publication?"`
+   - If the publication is more than 15 days on loan, a 50 cents per day penalty will be calculated for the number of days exceeding the 15 days. 
+      - Following message is printed: `Please pay $9.99 penalty for being X days late!`, 9.99 is replaced with the penalty value and X is replaced with the number of late days.
+   - set the membership number of the publication to 0 (zero)
+   - set the "changed" flag to true
+   - print: `"Publication returned"`
+
+#### Returning publication to library
+```Text
+Seneca Library Application
+ 1- Add New Publication
+ 2- Remove Publication
+ 3- Checkout publication from library
+ 4- Return publication to library
+ 0- Exit
+> 4
+Return publication to the library
+Choose the type of publication:
+ 1- Book
+ 2- Publication
+ 0- Exit
+> 1
+Publication Title: Harry
+Select one of the following found matches:
+ Row  |LocID | Title                          |Mem ID | Date       | Author          |
+------+------+--------------------------------+-------+------------+-----------------|
+   1- | T343 | Harry Potter.................. | 65205 | 2023/07/19 | J. K. Rowling   |
+   2- | C872 | Harry Potter and the Deathly H | 64984 | 2023/07/17 | J. K. Rowling   |
+   3- | C332 | Harry Potter and the Half/Bloo | 85952 | 2023/07/22 | J. K. Rowling   |
+   4- | D208 | Harry Potter and the Philosoph | 72685 | 2023/07/19 | J. K. Rowling   |
+> X (to Exit)
+> Row Number(select publication)
+> 2
+| C872 | Harry Potter and the Deathly H | 64984 | 2023/07/17 | J. K. Rowling   |
+Return Publication?
+ 1- Yes
+ 0- Exit
+> 1
+Please pay $4.00 penalty for being 8 days late!
+Publication returned
+```
+### The constructor
+Add the following to the constructor:
+- Initialize and set the [Publication Type Menu](#publication-type-menu) as described in the attributes section.
+- Add an argument to the constructor to receive the file name. Set the file name attribute to the incoming argument.
+
+## MS5 Sample execution
+
+When testing and debugging the application `LibAppMain.cpp` gives you the option to choose the data file.
+
+When submitting the milestones, the  `LibAppMain_prof.cpp` will be preset to the needed data file for testing.
+
+### Milestone 5 Test One  (m51)
+
+Data file: [LibRecsSmall.txt](MS5/LibRecsSmall.txt)
+
+- load
+- Book and Publication entry
+- setting the library reference number
+- save
+
+Data Entry:
+```Text
+1
+1
+S001
+Book one
+2023/8/5
+John Doe
+1
+1
+2
+S002
+Daily one
+2023/8/5
+1
+0
+1
+```
+[Correct Output](MS5/m51_correct_output.md)
+
+### Milestone 5 Test Two  (m52)
+
+Data file: [LibRecsSmall.txt](MS5/LibRecsSmall.txt)
+
+- load
+- Removing Publication and Book
+- save
+
+Data Entry:
+```Text
+2
+1
+e
+3
+1
+2
+2
+e
+3
+1
+0
+1
+```
+[Correct Output](MS5/m52_correct_output.md)
+
+### Milestone 5 Test Three (m53)
+
+Data file: [LibRecsSmall.txt](MS5/LibRecsSmall.txt)
+
+- load
+- Checking out and no match found
+- Checking out with success
+- save
+
+Data Entry:
+``` Text
+3
+1
+Harry
+3
+1
+Web
+1
+1
+12345
+0
+1
+```
+
+[Correct Output](MS5/m53_correct_output.md)
+
+### Milestone 5 Test Four (m54)
+
+Data file: [LibRecsSmall.txt](MS5/LibRecsSmall.txt)
+
+- load
+- Returning a Book with no penalty
+- Returning a Book with penalty
+- Returning a Publication
+- save
+
+Data Entry:
+```Text
+4
+1
+Harry
+1
+1
+4
+1
+Hobbit
+1
+1
+4
+2
+e
+2
+1
+0
+1
+```
+
+
+[Correct Output](MS5/m54_correct_output.md)
+
+### Milestone 5 Test Five  (m55)
+
+Data file: [LibRecs.txt](MS5/LibRecs.txt)
+
+>Before starting this this test make sure that in "Lib.h" <br />
+The maximum capacity of the library is set to 333. <br />`>>  const int SDDS_LIBRARY_CAPACITY = 333;  <<`
+
+- load
+- Adding a publication
+- Add another publication unsuccessfully
+- save
+
+Data Entry:
+```Text
+1
+2
+S003
+News Daily
+2023/8/5
+1
+1
+0
+1
+```
+
+[Correct Output](MS5/m55_correct_output.md)
+
+### Milestone 5 Test Six (m56)
+
+Data file: [LibRecs.txt](MS5/LibRecs.txt)
+
+- load
+- Aborting and error handling
+- exit without saving
+
+Data Entry:
+```Text
+1
+0
+2
+2
+<ENTER>
+x
+3
+1
+<ETNER>
+1
+1
+123456
+12345
+4
+2
+<ENTER>
+x
+0
+0
+1
+```
+
+[Correct Output](MS5/m56_correct_output.md)  
+
+## MS5 Submission
+
+For marking see [Final Project Mark and Due dates](#final-project-mark-and-due-dates)
+
+Files to upload to matrix:
+```Text
+Lib.h
+Utils.cpp
+Utils.h
+Date.cpp
+Date.h
+Menu.cpp
+Menu.h
+Streamable.cpp
+Streamable.h
+Publication.cpp
+Publication.h
+Book.cpp
+Book.h
+PublicationSelector.cpp
+PublicationSelector.h
+LibApp.cpp
+LibApp.h
+LibAppMain.cpp
+LibRecsSmall.txt
+LibRecs.txt
+```
+
+Upload all the source code , the tester program and the data files to your `matrix` account. Compile and run your code using the `g++` compiler [as shown in the introduction](#compiling-and-testing-your-program) and make sure that everything works properly.
+
+Then, run the following commands from your account (replace `profname.proflastname` with your professor’s Seneca userid):
+
+Each successful submission will earn you 10% of the prject mark (and with 4 submissions of milestones the total will be 100%)
+
+```
+~profname.proflastname/submit 2??/prj/m51
+~profname.proflastname/submit 2??/prj/m52
+~profname.proflastname/submit 2??/prj/m53
+~profname.proflastname/submit 2??/prj/m54
+~profname.proflastname/submit 2??/prj/m55
+~profname.proflastname/submit 2??/prj/m56
+```
+and follow the instructions.
+
+- *2??* is replaced with your subject code
+
+### The submit program's options:
+
+```bash
+~prof_name.prof_lastname/submit DeliverableName [-submission options]<ENTER>
+[-submission option] acceptable values:
+  "-due":
+       Shows due dates only
+       This option cannot be used in combination with any other option.
+  "-skip_spaces":
+       Do the submission regardless of incorrect horizontal spacing.
+       This option may attract penalty.
+  "-skip_blank_lines":
+       Do the submission regardless of incorrect vertical spacing.
+       This option may attract penalty.
+  "-feedback":
+       Check the program execution without submission.
+```
 
 ## [Back to milestones](#milestones)
 

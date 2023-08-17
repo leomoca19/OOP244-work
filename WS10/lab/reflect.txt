@@ -1,0 +1,66 @@
+Workshop 9 reflection
+/***********************************************************************
+Author: Leonardo Caceres
+Student number: 152877205
+Email: lde-la-mora-canceres@myseneca.ca
+Date of completion: 31-July-2023
+***********************************************************************/
+
+During this workshop and the project milestones, I learned some valuable skills that have boosted my confidence in C++ programming. One of the key takeaways was the concept of applying the "Rule of Three" in my classes. It involved implementing the copy constructor, copy assignment operator, and destructor correctly. By doing so, I ensured that dynamic memory allocated for objects was handled safely, avoiding memory leaks or double deletions. Understanding this rule allowed me to create robust classes, ensuring proper resource management, and making my code more reliable.
+
+A significant part of the project involved reading data from a file and storing it in dynamically allocated memory. By implementing the Text class, I honed my skills in file input/output and memory allocation. The read() function, in particular, taught me how to read the contents of a file character by character and dynamically allocate memory to store the data. It was quite satisfying to see my program correctly read and store file content, ensuring the data was terminated with a null byte.
+
+Throughout the process, I encountered some challenges, especially when dealing with file handling and managing dynamic memory properly. However, overcoming these difficulties provided valuable learning experiences. I made use of course materials and resources to understand and resolve the issues I faced, and it improved my problem-solving skills.
+
+Completing the project milestones was a great way to apply what I had learned so far. It gave me a sense of accomplishment to see my code working effectively, managing resources efficiently, and producing the expected results. As I progress in my programming journey, I am becoming more proficient in C++ concepts and techniques. This workshop has been a valuable stepping stone in my programming education, and I look forward to applying these skills in future projects.
+
+
+Workshop 10 reflection
+/***********************************************************************
+Author: Leonardo Caceres
+Student number: 152877205
+Email: lde-la-mora-canceres@myseneca.ca
+Date of completion: 7-August-2023
+***********************************************************************/
+
+template comments
+	/// <summary>
+	/// search receives a collection of type Collection<T>, an array of type T*, an array length , and a key of type K. It searches the array for occurrences of the key and adds the found elements to the given collection.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// Must support comparison using the equality operator 
+	/// The elements should be assignable to the collection using add method
+	/// 
+	/// <typeparam name="K"></typeparam>
+	/// Must support comparison using the equality operator
+	/// 
+	/// <param name="collection"></param>
+	/// class Collection should have a method add that takes an object of type T and adds it to the collection
+	///  collection's type T should match the type of the array elements
+	
+	/// <summary>
+	/// prints the elements of an array along with their indices and a title
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// Must support the insertion operator
+	/// 
+	/// <returns></returns>
+	/// returns a reference to the ostream object
+
+Workshop reflection	
+Throughout this workshop, I have engaged in an in-depth exploration of function templates within the context of C++ programming. The experience has been enlightening, as it has allowed me to grasp the intricacies of constructing and utilizing these templates effectively.
+
+Function templates serve as a versatile tool in my programming arsenal, enabling the creation of generalized functions that cater to a range of data types. The templates alleviate the need for redundant coding by providing a single blueprint that adapts to varying data structures. This was evident through the practical implementation of templates in functions such as search and listArrayElements, which demonstrated their flexibility and efficiency.
+
+By leveraging type parameters, I have acquired a profound understanding of how to design adaptable function templates that align with diverse data requirements. The acquired knowledge empowers me to resolve complex programming tasks with enhanced efficiency, avoiding code duplication and enhancing maintainability.
+
+In summary, this workshop has fortified my grasp of function templates and their significance in facilitating streamlined and optimized coding practices. The newfound expertise equips me to tackle future programming challenges with a holistic understanding of how to harness the potential of function templates.
+
+Milestone 3 reflection
+The third milestone of the project introduces the Streamable Interface module and the Publication class module, emphasizing the application of abstract base classes with pure virtual functions. The Streamable Interface acts as a template for classes that can be easily inserted into or extracted from streams. It enforces the implementation of functions like write, read, conIO, and a boolean conversion operator. This ensures that any class inheriting from Streamable can seamlessly interact with stream objects.
+
+Moreover, the Publication class encapsulates both periodical publications and books, functioning as a versatile container for various types of content. It encompasses attributes such as m_title, m_shelfId, m_membership, m_libRef, and m_date. Notably, the class exhibits both modifier and query methods, allowing for efficient modification and retrieval of attributes.
+
+To facilitate consistency and enhance system organization, a header file called "Lib.h" is introduced to hold general system values like SDDS_MAX_LOAN_DAYS, SDDS_TITLE_WIDTH, SDDS_AUTHOR_WIDTH, SDDS_SHELF_ID_LEN, and SDDS_LIBRARY_CAPACITY.
+
+In this milestone, the project's architecture reflects careful design considerations. Through the implementation of the Streamable Interface and the Publication class, the project achieves a higher degree of modularity and reusability, aligning with the principles of object-oriented programming and software design.

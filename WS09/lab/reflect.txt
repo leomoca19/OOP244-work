@@ -1,0 +1,14 @@
+/***********************************************************************
+Author: Leonardo Caceres
+Student number: 152877205
+Email: lde-la-mora-canceres@myseneca.ca
+Date of completion: 31-July-2023
+***********************************************************************/
+
+During this workshop and the project milestones, I learned some valuable skills that have boosted my confidence in C++ programming. One of the key takeaways was the concept of applying the "Rule of Three" in my classes. It involved implementing the copy constructor, copy assignment operator, and destructor correctly. By doing so, I ensured that dynamic memory allocated for objects was handled safely, avoiding memory leaks or double deletions. Understanding this rule allowed me to create robust classes, ensuring proper resource management, and making my code more reliable.
+
+A significant part of the project involved reading data from a file and storing it in dynamically allocated memory. By implementing the Text class, I honed my skills in file input/output and memory allocation. The read() function, in particular, taught me how to read the contents of a file character by character and dynamically allocate memory to store the data. It was quite satisfying to see my program correctly read and store file content, ensuring the data was terminated with a null byte.
+
+Throughout the process, I encountered some challenges, especially when dealing with file handling and managing dynamic memory properly. However, overcoming these difficulties provided valuable learning experiences. I made use of course materials and resources to understand and resolve the issues I faced, and it improved my problem-solving skills.
+
+Completing the project milestones was a great way to apply what I had learned so far. It gave me a sense of accomplishment to see my code working effectively, managing resources efficiently, and producing the expected results. As I progress in my programming journey, I am becoming more proficient in C++ concepts and techniques. This workshop has been a valuable stepping stone in my programming education, and I look forward to applying these skills in future projects.

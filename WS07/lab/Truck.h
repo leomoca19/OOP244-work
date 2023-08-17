@@ -23,6 +23,8 @@ namespace sdds {
 
 		std::ostream& write(std::ostream& os) const;
 		std::istream& read(std::istream& in);
+
+		operator bool()const;
 	};
 	std::ostream& operator<<(std::ostream& os, const Truck&);
 	std::istream& operator>>(std::istream& in, Truck&);
