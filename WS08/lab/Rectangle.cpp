@@ -12,30 +12,28 @@ using namespace std;
 namespace sdds {
 	Rectangle::Rectangle(): m_width(0), m_height(0) {}
 	Rectangle::Rectangle(const char* label, int width, int height)
-		: LblShape(label), m_width(0), m_height(0)
+		: LblShape(label), m_width(width), m_height(height)
 	{
         int comp = strlen(this->label()) + 2;
         if (m_height < 3 || m_width < comp)
 			m_width = m_height = 0;
 	}
 
-    void Rectangle::getSpecs(std::istream& is) {
+    istream& Rectangle::getSpecs(std::istream& is) {
         LblShape::getSpecs(is);
-        is.ignore(); // Ignore the comma
         is >> m_width;
         is.ignore(); // Ignore the comma
         is >> m_height;
         is.ignore(99, '\n');
+        return is;
     }
 
-    void Rectangle::draw(std::ostream& os) const {
-        if (m_width > 0 && m_height > 0 && label() != nullptr) {
+    ostream& Rectangle::draw(std::ostream& os) const {
+        if (m_width > 0 && m_height > 0 && label()) {
             // First line
             os << '+';
-            for (int i = 0; i < m_width - 2; i++) {
-                os << '-';
-            }
-            os << '+' << std::endl;
+            for (int i = 0; i < m_width - 2; i++) os << '-';
+            os << "+\n";
 
             // Second line
             os << '|';
@@ -53,10 +51,18 @@ namespace sdds {
 
             // Last line
             os << '+';
-            for (int i = 0; i < m_width - 2; i++) {
-                os << '-';
-            }
-            os << '+' << std::endl;
+            for (int i = 0; i < m_width - 2; i++) os << '-';
+            os << "+\n";
+
         }
+        return os;
+    }
+    std::ostream& operator<<(std::ostream& os, const Rectangle& rectangle)
+    {
+        return rectangle.draw(os);
+    }
+    std::istream& operator>>(std::istream& is, Rectangle& rectangle)
+    {
+        return rectangle.getSpecs(is);
     }
 }

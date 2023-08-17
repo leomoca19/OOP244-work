@@ -12,12 +12,10 @@ using namespace std;
 namespace sdds{
     ostream& operator<<(ostream& os, const Shape& S)
     {
-        /*return*/ S.draw(os);
-        return os;
+        return S.draw(os);
     }
     istream& operator>>(istream& is, Shape& S)
     {
-        /*return*/ S.getSpecs(is);
-        return is;
+        return S.getSpecs(is);
     }
 }

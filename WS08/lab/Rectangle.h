@@ -8,6 +8,7 @@ I have done all the coding by myself and only copied the code
 that my professor provided to complete my workshops and assignments.
 ***********************************************************************/
 #pragma once
+#include <iostream>
 #include "LblShape.h"
 namespace sdds {
 	class Rectangle : public LblShape {
@@ -18,7 +19,9 @@ namespace sdds {
 		Rectangle();
 		Rectangle(const char* label, int width, int height);
 
-		void getSpecs(std::istream& is) ;
-		void draw(std::ostream& os) const ;
+		std::istream& getSpecs(std::istream& is) ;
+		std::ostream& draw(std::ostream& os) const ;
 	};
+	std::ostream& operator<<(std::ostream& os, const Rectangle& rectangle);
+	std::istream& operator>>(std::istream& is, Rectangle& rectangle);
 }

@@ -18,8 +18,8 @@ namespace sdds {
 		Line();
 		Line(const char*, int );
 
-		void getSpecs(std::istream&) ;
-		virtual void draw(std::ostream&) const ;
+		std::istream& getSpecs(std::istream&) ;
+		virtual std::ostream& draw(std::ostream&) const ;
 
 	};
 

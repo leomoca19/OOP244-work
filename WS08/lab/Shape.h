@@ -12,8 +12,8 @@ that my professor provided to complete my workshops and assignments.
 namespace sdds {
 	class Shape {
 	public:
-		virtual void draw(std::ostream&) const = 0;
-		virtual void getSpecs(std::istream&) = 0;
+		virtual std::ostream& draw(std::ostream&) const = 0;
+		virtual std::istream& getSpecs(std::istream&) = 0;
 		virtual ~Shape() = default;
 	};
 	std::ostream& operator<<(std::ostream&, const Shape&);

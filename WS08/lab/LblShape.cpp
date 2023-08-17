@@ -29,7 +29,7 @@ namespace sdds {
 		m_label = nullptr;
 	}
 
-	void LblShape::getSpecs(std::istream& is) {
+	istream& LblShape::getSpecs(std::istream& is) {
 		char buffer[256];
 		is.getline(buffer, 256, ',');
 		if (m_label) {
@@ -38,6 +38,7 @@ namespace sdds {
 		}
 		m_label = new char[strlen(buffer) + 1];
 		strcpy(m_label, buffer);
+	return is;
 	}
 
 	

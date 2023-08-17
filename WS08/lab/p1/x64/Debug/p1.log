@@ -1,8 +1,3 @@
-﻿  LblShape.cpp
-  Line.cpp
-  main.cpp
-  Rectangle.cpp
+﻿  Rectangle.cpp
 G:\My Drive\cloud-Seneca\cloud-OOP244\OOP-work\WS08\lab\Rectangle.cpp(17,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  Shape.cpp
-  Generating Code...
   p1.vcxproj -> G:\My Drive\cloud-Seneca\cloud-OOP244\OOP-work\WS08\lab\p1\x64\Debug\p1.exe
