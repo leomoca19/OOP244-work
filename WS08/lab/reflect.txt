@@ -1,0 +1,19 @@
+/***********************************************************************
+Author: Leonardo Caceres
+Student number: 152877205
+Email: lde-la-mora-canceres@myseneca.ca
+Date of completion: August-17-2023
+***********************************************************************/
+
+
+Completing the workshop and the associated project has significantly enriched my understanding of fundamental concepts in object-oriented programming. Throughout the workshop, I've learned about essential principles like pure virtual functions, abstract base classes, and polymorphism. Pure virtual functions, acting as placeholders without implementations, emphasize the necessity for derived classes to provide their own implementations. Abstract base classes, in contrast, serve as blueprints for derived classes, ensuring adherence to a common interface while allowing for specialized behavior.
+
+In the context of the project, these concepts came to life through the implementation of abstract base classes and concrete classes like Line and Rectangle. The project reinforced my comprehension of how inheritance and polymorphism can lead to well-structured, extensible codebases. Moreover, the project showcased the practical utilization of virtual functions, enabling dynamic behavior in derived classes. The distinction between abstract base classes and concrete classes became evident, where the former defines a blueprint while the latter offers specific implementations.
+
+One of the crucial takeaways from this endeavor was the significance of virtual destructors in ensuring proper memory management. By incorporating them, I gained insights into preventing memory leaks and the correct deallocation of resources when objects are destroyed. Additionally, overloading operators for stream interactions, along with the utilization of interfaces, proved instrumental in facilitating standardized object interactions through streams.
+
+However, I encountered certain challenges during the workshop. Understanding the intricacies of pure virtual functions, interfaces, and virtual destructors required focused attention. Ensuring memory management, particularly with dynamically allocated attributes, necessitated careful consideration to avoid memory leaks. Similarly, the complexities of operator overloads and stream interactions demanded a meticulous approach to detail.
+
+Moving to a similar milestone, involving the Streamable Interface and the Publication Class Modules, further expanded my expertise. The Streamable Interface concept reinforced the importance of abstract base classes and interfaces, enabling polymorphic behaviors and standardized interactions. On the other hand, the Publication Class Module introduced more sophisticated structures, with various attributes, methods, and operator overloads. This deepened my understanding of encapsulation and how classes can exhibit specific behaviors.
+
+In conclusion, the completion of both the workshop and the milestone projects has significantly enhanced my knowledge of object-oriented programming. The practical implementation of concepts like pure virtual functions, abstract base classes, and polymorphism in real-world scenarios, coupled with the challenges I encountered and overcame, has empowered me to design and build more robust, maintainable, and flexible software solutions. These experiences have solidified my grasp of programming principles and equipped me with practical skills applicable to future projects.
